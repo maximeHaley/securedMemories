@@ -38,7 +38,8 @@ dependencies {
     implementation(libs.material)
     implementation(libs.activity)
     implementation(libs.constraintlayout)
-    implementation("com.google.android.gms:play-services-location:21.3.0") //bug sur la version catalog donc je l'ai import comme ça
+    implementation("com.google.android.gms:play-services-location:21.0.1")
+    implementation(libs.play.services.maps) //bug sur la version catalog donc je l'ai import comme ça
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)

@@ -20,14 +20,12 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.google.android.gms.location.FusedLocationProviderClient;
 
 import java.util.concurrent.Executor;
 
 public class MainActivity extends AppCompatActivity {
 
-    private FusedLocationProviderClient fusedLocationClient;
-    private static final int LOCATION_PERMISSION_REQUEST_CODE = 100;
+
 
 
     @Override
@@ -73,8 +71,6 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences prefs = getSharedPreferences("MyPrefs", MODE_PRIVATE);
         float latitude = prefs.getFloat("latitude", 0f); // 0f = valeur par défaut si rien trouvé
         float longitude = prefs.getFloat("longitude", 0f);
-        TextView coordonneesText = findViewById(R.id.coordonnesText);
-        coordonneesText.setText("Lat: " + latitude + "\nLon: " + longitude);
 
     }
     private void authenticate(){
@@ -107,29 +103,5 @@ public class MainActivity extends AppCompatActivity {
                 .build();
 
         biometricPrompt.authenticate(promptInfo);
-    }
-    @RequiresPermission(allOf = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION})
-    private void getLastLocation(){
-        fusedLocationClient.getLastLocation().addOnSuccessListener(this,location->{
-            if(location!=null){
-                double latitude=location.getLatitude();
-                double longitude=location.getLongitude();
-                Toast.makeText(this, "Lat: " + latitude + ", Lon: " + longitude, Toast.LENGTH_LONG).show();
-                /*Sauvegarde dans les préférences*/
-                SharedPreferences prefs = getSharedPreferences("MyPrefs", MODE_PRIVATE);
-                SharedPreferences.Editor editor = prefs.edit();
-                editor.putFloat("latitude", (float) latitude);
-                editor.putFloat("longitude", (float) longitude);
-                editor.apply();
-            }
-            else {
-                Toast.makeText(this, "Impossible de récupérer la localisation", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-    /*ça sert à la demande de permission de localisation, même si j'ai pas compris toute la syntaxe*/
-    private boolean hasLocationPermission() {
-        return ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
-                || ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
     }
 }
