@@ -1,6 +1,6 @@
 # 📱 SecureMemories - Journal de Développement
 
-Application Android pour la gestion sécurisée de souvenirs, incluant la géolocalisation et l'affichage cartographique.
+Application Android pour la gestion **sécurisée** de souvenirs, incluant la **géolocalisation**, l’**affichage cartographique**, et une **galerie d’images privée**.
 
 ---
 
@@ -28,6 +28,19 @@ Application Android pour la gestion sécurisée de souvenirs, incluant la géolo
 ### 5. Sauvegarde de la configuration
 - Sauvegarde de la localisation via `SharedPreferences`.
 - Redirection vers `MainActivity` si l'adresse est validée.
+- Sécurisation de l’accès via authentification biométrique (`BiometricPrompt`).
+
+### 6. Galerie privée
+- Création de `GalleryActivity` pour afficher les souvenirs visuellement.
+- Ajout d’un bouton pour importer une image depuis la galerie du téléphone.
+- Sauvegarde des images **en stockage privé interne** (non visible par d’autres apps).
+- Sauvegarde des chemins d’accès avec `SharedPreferences`.
+- Affichage des images dans un `RecyclerView` en grille avec `Glide`.
+
+### 7. Fonctions interactives de la galerie
+- Appui **court** sur une image : affichage en **plein écran** (`FullScreenImageActivity`).
+- Appui **long** sur une image : affichage d’une boîte de dialogue pour **supprimer** l’image.
+- Suppression effective du fichier depuis le stockage privé **et** des préférences.
 
 ---
 
@@ -38,17 +51,36 @@ Application Android pour la gestion sécurisée de souvenirs, incluant la géolo
   - `com.google.android.gms:play-services-maps`
 - **AndroidX :**
   - `androidx.appcompat:appcompat`
+  - `androidx.constraintlayout:constraintlayout`
+  - `androidx.biometric:biometric`
+- **UI & Media :**
+  - `com.github.bumptech.glide:glide:4.16.0`
 
 ---
 
 ## 🧪 Fonctions Implémentées
 
-| Fonction                        | Classe / Méthode                         | Statut |
-|-------------------------------|------------------------------------------|--------|
-| Récupérer une adresse         | `buttonValider.setOnClickListener`       | ✅     |
-| Utiliser la position actuelle | `requestFreshLocation()`                 | ✅     |
-| Vérification des permissions  | `hasLocationPermission()` + `onRequestPermissionsResult()` | ✅ |
-| Affichage sur carte           | `MapActivity` (non montré ici)           | ✅     |
-| Gestion bouton Oui/Non        | `MapActivity`                            | ✅     |
-| Sauvegarde en local           | `SharedPreferences`                      | ✅     |
+| Fonction                              | Classe / Méthode                         | Statut |
+|---------------------------------------|------------------------------------------|--------|
+| Récupérer une adresse                 | `buttonValider.setOnClickListener`       | ✅     |
+| Utiliser la position actuelle         | `requestFreshLocation()`                 | ✅     |
+| Vérification des permissions          | `hasLocationPermission()` + `onRequestPermissionsResult()` | ✅ |
+| Affichage sur carte                   | `MapActivity`                            | ✅     |
+| Gestion des boutons Oui / Non         | `MapActivity`                            | ✅     |
+| Sauvegarde de l'adresse               | `SharedPreferences`                      | ✅     |
+| Authentification biométrique         | `BiometricPrompt` dans `MainActivity`    | ✅     |
+| Importer une image                    | `GalleryActivity.openImagePicker()`      | ✅     |
+| Sauvegarde d’image privée             | `getFilesDir()` + `FileOutputStream`     | ✅     |
+| Affichage des images en grille        | `RecyclerView` + `ImageAdapter`          | ✅     |
+| Suppression d’une image               | `onLongClickListener` dans `ImageAdapter`| ✅     |
+| Affichage plein écran d’une image     | `FullScreenImageActivity`                | ✅     |
 
+---
+
+## 🔐 Sécurité
+
+- Stockage interne uniquement (`getFilesDir()`), non accessible depuis la galerie ou d'autres applications.
+- Authentification biométrique obligatoire après l'ouverture de l'application si une localisation est enregistrée.
+- Aucune donnée n’est stockée sur des serveurs externes.
+
+---
