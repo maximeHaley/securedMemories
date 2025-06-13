@@ -1,25 +1,54 @@
-# 📱 SecureMemories
+# 📱 SecureMemories - Journal de Développement
 
-Application Android permettant aux utilisateurs de localiser une adresse ou d'utiliser leur position actuelle pour afficher une carte.
-
-## Fonctionnalités Implémentées
-
-- 🌍 **Recherche d'adresse** via un champ texte (Geocoder)
-- 📍 **Récupération de la position GPS actuelle** avec permissions dynamiques
-- 🗺️ **Affichage d'une carte Google Maps** à partir de coordonnées GPS
-- ✔️ **Validation ou refus de l'adresse sur la carte** via deux boutons (Oui / Non)
-- 🔄 **Redirection conditionnelle** :
-  - Oui : sauvegarde des préférences et retour à `MainActivity`
-  - Non : retour à `SetupActivity` sans sauvegarde
-- 💾 **Sauvegarde des préférences utilisateur** avec `SharedPreferences`
-
-
-## Modules principaux
-
-- `SetupActivity` : choix manuel ou GPS de l'adresse
-- `MapActivity` : affichage carte + validation
-- `MainActivity` : accueil de l’application après setup
+Application Android pour la gestion sécurisée de souvenirs, incluant la géolocalisation et l'affichage cartographique.
 
 ---
 
+## 🛠️ Étapes de Développement
+
+### 1. Initialisation du projet
+- Création du projet `SecureMemories` sous Android Studio.
+- Définition des activités principales : `SetupActivity`, `MapActivity`, `MainActivity`.
+
+### 2. Implémentation de la recherche par adresse
+- Utilisation de l’`EditText` pour saisir une adresse.
+- Intégration de l’API `Geocoder` pour obtenir les coordonnées GPS.
+- Gestion des erreurs de réseau ou d'adresse invalide.
+
+### 3. Récupération de la position actuelle (GPS)
+- Ajout des permissions runtime `ACCESS_FINE_LOCATION` / `ACCESS_COARSE_LOCATION`.
+- Utilisation de `FusedLocationProviderClient` pour une récupération fiable de la position.
+- Correction d'un crash causé par un appel prématuré à `finish()`.
+
+### 4. Affichage sur carte
+- Ajout de `MapActivity` affichant une carte Google Maps.
+- Marqueur placé à la position choisie (adresse ou GPS).
+- Boutons "Oui / Non" pour valider la localisation.
+
+### 5. Sauvegarde de la configuration
+- Sauvegarde de la localisation via `SharedPreferences`.
+- Redirection vers `MainActivity` si l'adresse est validée.
+
+---
+
+## 📦 Dépendances Utilisées
+
+- **Google Play Services :**
+  - `com.google.android.gms:play-services-location`
+  - `com.google.android.gms:play-services-maps`
+- **AndroidX :**
+  - `androidx.appcompat:appcompat`
+
+---
+
+## 🧪 Fonctions Implémentées
+
+| Fonction                        | Classe / Méthode                         | Statut |
+|-------------------------------|------------------------------------------|--------|
+| Récupérer une adresse         | `buttonValider.setOnClickListener`       | ✅     |
+| Utiliser la position actuelle | `requestFreshLocation()`                 | ✅     |
+| Vérification des permissions  | `hasLocationPermission()` + `onRequestPermissionsResult()` | ✅ |
+| Affichage sur carte           | `MapActivity` (non montré ici)           | ✅     |
+| Gestion bouton Oui/Non        | `MapActivity`                            | ✅     |
+| Sauvegarde en local           | `SharedPreferences`                      | ✅     |
 
