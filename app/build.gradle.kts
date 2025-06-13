@@ -39,6 +39,8 @@ dependencies {
     implementation(libs.activity)
     implementation(libs.constraintlayout)
     implementation("com.google.android.gms:play-services-location:21.0.1")
+    implementation("com.github.bumptech.glide:glide:4.16.0")
+    annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")
     implementation(libs.play.services.maps) //bug sur la version catalog donc je l'ai import comme ça
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)

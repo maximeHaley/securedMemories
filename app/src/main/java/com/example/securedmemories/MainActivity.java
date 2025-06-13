@@ -1,17 +1,15 @@
 package com.example.securedmemories;
-
-import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Bundle;
+import android.os.Looper;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresPermission;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.biometric.BiometricManager;
 import androidx.biometric.BiometricPrompt;
@@ -20,6 +18,12 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
 
 import java.util.concurrent.Executor;
 
@@ -42,18 +46,7 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
-        Button resetButton = findViewById(R.id.buttonReset);
-        resetButton.setOnClickListener(v -> {
-            SharedPreferences prefs = getSharedPreferences("MyPrefs", MODE_PRIVATE);
-            SharedPreferences.Editor editor = prefs.edit();
-            editor.clear(); // Supprime toutes les préférences
-            editor.apply(); // Sauvegarde la suppression
 
-            Toast.makeText(this, "Préférences supprimées", Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(this, SetupActivity.class);
-            startActivity(intent);
-            finish();
-        });
         /*Test du capteur biométrique*/
         BiometricManager biometricManager = BiometricManager.from(this);
         int canAuthenticate = biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG);
@@ -69,8 +62,9 @@ public class MainActivity extends AppCompatActivity {
         }
         /*Récupération de la latitude et longitude stockées dans les préférences*/
         SharedPreferences prefs = getSharedPreferences("MyPrefs", MODE_PRIVATE);
-        float latitude = prefs.getFloat("latitude", 0f); // 0f = valeur par défaut si rien trouvé
+        float latitude = prefs.getFloat("latitude", 0f);
         float longitude = prefs.getFloat("longitude", 0f);
+
 
     }
     private void authenticate(){
@@ -81,6 +75,8 @@ public class MainActivity extends AppCompatActivity {
             public void onAuthenticationSucceeded(@NonNull BiometricPrompt.AuthenticationResult result){
                 super.onAuthenticationSucceeded(result);
                 Toast.makeText(MainActivity.this, "Empreinte reconnue !", Toast.LENGTH_SHORT).show();
+                /*Là je compare la position actuelle avec la position enregistrée dans les prefs*/
+                checkLocationAccess();
             }
 
             @Override
@@ -104,4 +100,46 @@ public class MainActivity extends AppCompatActivity {
 
         biometricPrompt.authenticate(promptInfo);
     }
+    @SuppressLint("MissingPermission")
+    private void checkLocationAccess() {
+        SharedPreferences prefs = getSharedPreferences("MyPrefs", MODE_PRIVATE);
+        double savedLat = prefs.getFloat("latitude", 0);
+        double savedLon = prefs.getFloat("longitude", 0);
+
+        FusedLocationProviderClient fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
+        LocationRequest locationRequest = LocationRequest.create();
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        locationRequest.setNumUpdates(1);
+        locationRequest.setInterval(1000);
+
+        LocationCallback locationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(@NonNull LocationResult locationResult) {
+                Location currentLocation = locationResult.getLastLocation();
+
+                if (currentLocation != null) {
+                    double currentLat = currentLocation.getLatitude();
+                    double currentLon = currentLocation.getLongitude();
+
+                    float[] results = new float[1];
+                    Location.distanceBetween(savedLat, savedLon, currentLat, currentLon, results);
+
+                    if (results[0] <= 50) {
+                        startActivity(new Intent(MainActivity.this, GalleryActivity.class));
+                    } else {
+                        Toast.makeText(MainActivity.this, "Vous n'êtes pas à la bonne position", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(MainActivity.this, "Impossible d'obtenir votre position", Toast.LENGTH_SHORT).show();
+                }
+
+                fusedLocationClient.removeLocationUpdates(this);
+            }
+        };
+
+        fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper());
+    }
 }
+
+
