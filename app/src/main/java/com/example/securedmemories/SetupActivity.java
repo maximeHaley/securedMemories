@@ -92,7 +92,6 @@ public class SetupActivity extends AppCompatActivity {
         gpsButton.setOnClickListener(v -> {
             if (hasLocationPermission()) {
                 requestFreshLocation();
-                finish();
             } else {
                 requestLocationPermissions();
             }
