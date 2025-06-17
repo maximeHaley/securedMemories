@@ -31,7 +31,6 @@ public class LauncherActivity extends AppCompatActivity {
         if (adresseEnregistree) {
             startActivity(new Intent(this, MainActivity.class));
         } else {
-            // Première ouverture → on va vers SetupActivity
             startActivity(new Intent(this, SetupActivity.class));
         }
 

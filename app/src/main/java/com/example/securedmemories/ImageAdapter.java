@@ -64,7 +64,7 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageViewHol
                     .setTitle("Supprimer l'image")
                     .setMessage("Voulez-vous supprimer cette image ?")
                     .setPositiveButton("Oui", (dialog, which) -> {
-                        // Supprimer le fichier si existant
+                        /* Supprimer le fichier si existant*/
                         File file = new File(imageUri.getPath());
                         if (file.exists()) {
                             boolean deleted = file.delete();

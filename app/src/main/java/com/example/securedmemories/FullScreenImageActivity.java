@@ -26,7 +26,7 @@ public class FullScreenImageActivity extends AppCompatActivity {
         });
         ImageView fullscreenImageView = findViewById(R.id.fullscreenImageView);
 
-        // Récupère l'URI passée depuis l'adapter
+        /* Récupère l'URI passée depuis l'adapter*/
         String imageUriString = getIntent().getStringExtra("imageUri");
         if (imageUriString != null) {
             Uri imageUri = Uri.parse(imageUriString);
